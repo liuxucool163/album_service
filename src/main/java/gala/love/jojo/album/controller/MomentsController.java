@@ -16,19 +16,19 @@ public class MomentsController {
     @Autowired
     private MomentsService momentsService;
 
-    @PostMapping
+    @PostMapping("/createMoment")
     public ResponseEntity<MomentsEntity> createMoment(@RequestBody MomentsEntity momentsEntity) {
         MomentsEntity created = momentsService.createMoment(momentsEntity);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteMoment/{id}")
     public ResponseEntity<Void> deleteMoment(@PathVariable Long id) {
         momentsService.deleteMoment(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping
+    @GetMapping("/getMoments")
     public ResponseEntity<List<MomentsEntity>> getMoments() {
         List<MomentsEntity> momentsEntities = momentsService.getMoments();
         return new ResponseEntity<>(momentsEntities, HttpStatus.OK);
