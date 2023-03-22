@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +22,11 @@ public class MomentsController {
     private MomentsService momentsService;
 
     @PostMapping("/createMoment")
-    public ResponseEntity<MomentsEntity> createMoment(@RequestBody MomentsEntity momentsEntity) {
-        MomentsEntity created = momentsService.createMoment(momentsEntity);
+    public ResponseEntity<MomentsEntity> createMoment(@RequestParam String content,
+                                                      @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+        MomentsEntity momentsEntity = new MomentsEntity();
+        momentsEntity.setContent(content);
+        MomentsEntity created = momentsService.createMoment(momentsEntity, images);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
