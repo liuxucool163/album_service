@@ -3,6 +3,9 @@ package gala.love.jojo.album.service;
 import gala.love.jojo.album.entity.MomentsEntity;
 import gala.love.jojo.album.repository.MomentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -26,11 +29,13 @@ public class MomentsService {
         momentsRepository.deleteById(id);
     }
 
-    public List<MomentsEntity> getMoments() {
-        return momentsRepository.findAll();
+    public Page<MomentsEntity> getMoments(Pageable pageable) {
+        return momentsRepository.findAll(pageable);
     }
 
-    public List<MomentsEntity> getMomentsByDateRange(LocalDate startDate, LocalDate endDate) {
-        return momentsRepository.findByCreateTimeBetween(startDate.atStartOfDay(), endDate.atStartOfDay().plusDays(1).minusNanos(1));
+    public Page<MomentsEntity> getMomentsByDateRange(LocalDate start, LocalDate end, Pageable pageable) {
+        LocalDateTime startDate = start.atStartOfDay();
+        LocalDateTime endDate = end.plusDays(1).atStartOfDay().minusSeconds(1);
+        return momentsRepository.findByCreateTimeBetween(startDate, endDate, pageable);
     }
 }

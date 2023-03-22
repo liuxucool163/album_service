@@ -3,6 +3,8 @@ package gala.love.jojo.album.controller;
 import gala.love.jojo.album.entity.MomentsEntity;
 import gala.love.jojo.album.service.MomentsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,17 +33,24 @@ public class MomentsController {
     }
 
     @GetMapping("/getMoments")
-    public ResponseEntity<List<MomentsEntity>> getMoments() {
-        List<MomentsEntity> momentsEntities = momentsService.getMoments();
+    public ResponseEntity<List<MomentsEntity>> getMoments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<MomentsEntity> momentsPage = momentsService.getMoments(PageRequest.of(page, size));
+        List<MomentsEntity> momentsEntities = momentsPage.getContent();
         return new ResponseEntity<>(momentsEntities, HttpStatus.OK);
     }
 
     @GetMapping("/getMomentsByDateRange")
-    public ResponseEntity<List<MomentsEntity>> getMomentsByDateRange(@RequestParam(name = "startDate") String startDateStr, @RequestParam(name = "endDate") String endDateStr) {
-        // 调用 MomentsService 类中的方法，按照日期范围筛选获取 moments
-        LocalDate startDate = LocalDate.parse(startDateStr);
-        LocalDate endDate = LocalDate.parse(endDateStr);
-        List<MomentsEntity> momentsEntities = momentsService.getMomentsByDateRange(startDate, endDate);
+    public ResponseEntity<List<MomentsEntity>> getMomentsByDateRange(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        Page<MomentsEntity> momentsPage = momentsService.getMomentsByDateRange(start, end, PageRequest.of(page, size));
+        List<MomentsEntity> momentsEntities = momentsPage.getContent();
         return new ResponseEntity<>(momentsEntities, HttpStatus.OK);
     }
 }
